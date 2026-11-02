@@ -170,7 +170,7 @@ function initProfileEditForm() {
     } catch (err) {
       console.error('Profile update error:', err);
       if (err.isNetworkError) {
-        showToast('Backend Offline', 'Could not sync with Spring Boot backend (localhost:8080). Saved locally.', 'warning');
+        showToast('Backend Offline', `Could not sync with Spring Boot backend (${window.bcApi.baseUrl}). Saved locally.`, 'warning');
         currentUserProfile = { ...currentUserProfile, ...payload };
         window.bcApi.setSession(currentUserProfile);
         renderProfileData(currentUserProfile, false);

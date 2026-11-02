@@ -1,9 +1,9 @@
 /**
  * BloodConnect — Central API Client
- * Connects directly to the Java Spring Boot Backend at http://localhost:8080
+ * Connects to Java Spring Boot Backend (Render production / Localhost development)
  * 
  * Existing Backend Endpoints Supported:
- * - GET  /api/auth/csrf   -> Fetches CSRF token
+ * - GET  /api/auth/csrf   -> Fetches CSRF token & sets SameSite=None session cookie
  * - POST /api/auth/signup -> Creates new account (SignUpRequest)
  * - POST /api/auth/signin -> Authenticates & creates session (SignInRequest)
  * - POST /api/auth/logout -> Invalidates session
@@ -11,17 +11,35 @@
  * - PUT  /api/profile     -> Updates authenticated user's profile
  */
 
-const API_BASE_URL = window.API_BASE_URL || "https://blood-donation-1mnb.onrender.com";
+const savedApiUrl = (typeof localStorage !== 'undefined') ? localStorage.getItem('bloodconnect_api_url') : null;
+const isLocalEnv = (typeof window !== 'undefined') && (
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1' ||
+  window.location.hostname === ''
+);
+const API_BASE_URL = window.API_BASE_URL || savedApiUrl || (isLocalEnv ? 'http://localhost:8080' : 'https://blood-donation-1mnb.onrender.com');
 
 class BloodConnectApi {
   constructor() {
-    this.baseUrl = API_BASE_URL;
+    this.baseUrl = API_BASE_URL.replace(/\/+$/, '');
+    this.csrfToken = null;
+    this.csrfHeaderName = 'X-XSRF-TOKEN';
+    this.isBackendOnline = null;
+  }
+
+  setBaseUrl(url) {
+    if (!url) return;
+    this.baseUrl = url.replace(/\/+$/, '');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('bloodconnect_api_url', this.baseUrl);
+    }
     this.csrfToken = null;
     this.isBackendOnline = null;
   }
 
   /**
-   * Check if the Java Spring Boot backend is active and reachable
+   * Check if the Java Spring Boot backend is active and reachable.
+   * Also pre-fetches the CSRF token and warms the cross-origin session cookie.
    */
   async checkHealth() {
     try {
@@ -32,9 +50,10 @@ class BloodConnectApi {
       });
       this.isBackendOnline = response.ok || response.status === 200;
       if (this.isBackendOnline) {
-        const data = await response.json();
+        const data = await response.json().catch(() => null);
         if (data && data.token) {
           this.csrfToken = data.token;
+          if (data.headerName) this.csrfHeaderName = data.headerName;
         }
       }
       return this.isBackendOnline;
@@ -46,17 +65,16 @@ class BloodConnectApi {
   }
 
   /**
-   * Fetch CSRF Token from Spring Security
+   * Fetch CSRF Token from Spring Security.
+   * In cross-origin setups (Vercel -> Render), document.cookie cannot be read across domains.
+   * We query /api/auth/csrf with credentials: 'include', which sets the Secure SameSite=None cookie
+   * in the browser and returns the token in the JSON body.
    */
-  async getCsrfToken() {
-    // 1. Try reading existing cookie first
-    const cookieMatch = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-    if (cookieMatch && cookieMatch[1]) {
-      this.csrfToken = decodeURIComponent(cookieMatch[1]);
+  async getCsrfToken(forceFresh = false) {
+    if (!forceFresh && this.csrfToken) {
       return this.csrfToken;
     }
 
-    // 2. Fetch fresh token from backend endpoint
     try {
       const res = await fetch(`${this.baseUrl}/api/auth/csrf`, {
         method: 'GET',
@@ -64,18 +82,31 @@ class BloodConnectApi {
         headers: { 'Accept': 'application/json' }
       });
       if (res.ok) {
-        const data = await res.json();
-        this.csrfToken = data.token;
-        return this.csrfToken;
+        const data = await res.json().catch(() => null);
+        if (data && data.token) {
+          this.csrfToken = data.token;
+          if (data.headerName) this.csrfHeaderName = data.headerName;
+          return this.csrfToken;
+        }
       }
     } catch (err) {
       console.warn('[BloodConnect API] Could not retrieve CSRF token:', err.message);
     }
+
+    // Fallback for same-origin local development only: read XSRF-TOKEN cookie if present
+    if (!this.csrfToken && typeof document !== 'undefined') {
+      const cookieMatch = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+      if (cookieMatch && cookieMatch[1]) {
+        this.csrfToken = decodeURIComponent(cookieMatch[1]);
+      }
+    }
+
     return this.csrfToken;
   }
 
   /**
-   * Reusable fetch wrapper with credentials, CSRF header, and error parsing
+   * Reusable fetch wrapper with credentials, CSRF header, error parsing,
+   * and automatic 1-time retry on 403 CSRF token mismatch.
    */
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
@@ -89,26 +120,33 @@ class BloodConnectApi {
     const method = (options.method || 'GET').toUpperCase();
     if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
       if (!this.csrfToken) {
-        await this.getCsrfToken();
+        await this.getCsrfToken(true);
       }
       if (this.csrfToken) {
-        headers['X-XSRF-TOKEN'] = this.csrfToken;
+        headers[this.csrfHeaderName || 'X-XSRF-TOKEN'] = this.csrfToken;
       }
     }
 
     const config = {
       ...options,
       headers,
-      credentials: 'include' // Required for Spring Security JSESSIONID cookies
+      credentials: 'include' // Required for Spring Security JSESSIONID and XSRF-TOKEN cookies
     };
 
     let response;
     try {
       response = await fetch(url, config);
     } catch (netErr) {
-      const error = new Error(`Cannot connect to Spring Boot backend at ${this.baseUrl}. Please ensure the backend is running with 'mvn spring-boot:run'.`);
+      const error = new Error(`Cannot connect to Spring Boot backend at ${this.baseUrl}. Please verify that the backend is running.`);
       error.isNetworkError = true;
       throw error;
+    }
+
+    // Handle 403 CSRF token expiration/rotation with a 1-time fresh retry
+    if (response.status === 403 && !options._isRetry && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+      console.warn('[BloodConnect API] 403 received on mutating request. Fetching fresh CSRF token and retrying...');
+      await this.getCsrfToken(true);
+      return this.request(endpoint, { ...options, _isRetry: true });
     }
 
     // Parse response body

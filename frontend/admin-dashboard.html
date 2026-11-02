@@ -273,9 +273,9 @@
         <div class="card" style="max-width:700px;">
           <div class="form-group">
             <label class="form-label">Spring Boot Backend Base URL</label>
-            <input type="text" id="setting-backend-url" class="form-control" value="http://localhost:8080">
+            <input type="text" id="setting-backend-url" class="form-control" value="">
             <small style="color:var(--text-muted); font-size:0.8rem; margin-top:0.35rem; display:block;">
-              Matches <code>server.port=8080</code> defined in <code>application.properties</code>.
+              Configured backend service URL (Render production or local port 8080).
             </small>
           </div>
           <button class="btn btn-primary btn-sm" onclick="saveBackendUrlSetting()">Save Backend URL</button>
@@ -288,11 +288,17 @@
   <script src="js/common.js"></script>
   <script src="js/admin-dashboard.js"></script>
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlInput = document.getElementById('setting-backend-url');
+      if (urlInput && window.bcApi) {
+        urlInput.value = window.bcApi.baseUrl;
+      }
+    });
+
     function saveBackendUrlSetting() {
       const val = document.getElementById('setting-backend-url').value.trim();
       if (val) {
-        window.API_BASE_URL = val;
-        window.bcApi.baseUrl = val;
+        window.bcApi.setBaseUrl(val);
         showToast('Settings Saved', `Backend URL set to ${val}. Re-checking connection...`, 'info');
         initBackendHealthCheck();
       }

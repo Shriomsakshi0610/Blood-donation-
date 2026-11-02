@@ -38,7 +38,14 @@ public class AuthController {
 
     @GetMapping("/csrf")
     public Map<String, String> csrf(CsrfToken csrfToken) {
-        return Map.of("token", csrfToken.getToken());
+        if (csrfToken == null) {
+            return Map.of("token", "");
+        }
+        return Map.of(
+            "token", csrfToken.getToken(),
+            "headerName", csrfToken.getHeaderName() != null ? csrfToken.getHeaderName() : "X-XSRF-TOKEN",
+            "parameterName", csrfToken.getParameterName() != null ? csrfToken.getParameterName() : "_csrf"
+        );
     }
 
     @PostMapping("/signup")

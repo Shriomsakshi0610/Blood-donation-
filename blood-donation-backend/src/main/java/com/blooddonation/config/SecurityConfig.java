@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -48,47 +49,69 @@ public class SecurityConfig {
         return new HttpSessionSecurityContextRepository();
     }
 
-    
     @Bean
-CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
 
-    configuration.setAllowedOrigins(List.of(
-        "https://blood-donation-frontend-one.vercel.app",
-        "http://localhost:3000",
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-    ));
+        configuration.setAllowedOrigins(List.of(
+            "https://blood-donation-frontend-one.vercel.app",
+            "http://localhost:3000",
+            "http://localhost:5500",
+            "http://127.0.0.1:5500",
+            "http://localhost:8080"
+        ));
 
-    configuration.setAllowedMethods(List.of(
-        "GET", "POST", "PUT", "PATCH",
-        "DELETE", "OPTIONS", "HEAD"
-    ));
+        configuration.setAllowedOriginPatterns(List.of(
+            "https://blood-donation-frontend-one.vercel.app",
+            "https://blood-donation-frontend-one-*.vercel.app",
+            "http://localhost:[*]",
+            "http://127.0.0.1:[*]"
+        ));
 
-    configuration.setAllowedHeaders(List.of("*"));
-    configuration.setAllowCredentials(true);
+        configuration.setAllowedMethods(List.of(
+            "GET", "POST", "PUT", "PATCH",
+            "DELETE", "OPTIONS", "HEAD"
+        ));
 
-    configuration.setExposedHeaders(List.of(
-        "Set-Cookie", "X-XSRF-TOKEN"
-    ));
+        configuration.setAllowedHeaders(List.of(
+            "Authorization", "Content-Type", "Accept", "X-XSRF-TOKEN",
+            "X-Requested-With", "Origin", "Access-Control-Request-Method",
+            "Access-Control-Request-Headers", "*"
+        ));
+        configuration.setAllowCredentials(true);
 
-    UrlBasedCorsConfigurationSource source =
-        new UrlBasedCorsConfigurationSource();
+        configuration.setExposedHeaders(List.of(
+            "Set-Cookie", "X-XSRF-TOKEN"
+        ));
+        configuration.setMaxAge(3600L);
 
-    source.registerCorsConfiguration("/**", configuration);
-
-    return source;
-}
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             DaoAuthenticationProvider authenticationProvider) throws Exception {
+        
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        requestHandler.setCsrfRequestAttributeName(null);
+
+        CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        csrfTokenRepository.setCookieCustomizer(customizer -> customizer
+            .sameSite("None")
+            .secure(true)
+            .path("/")
+        );
+
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authenticationProvider(authenticationProvider)
-            .csrf(csrf -> csrf.csrfTokenRepository(
-                CookieCsrfTokenRepository.withHttpOnlyFalse()))
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(csrfTokenRepository)
+                .csrfTokenRequestHandler(requestHandler)
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/index.html", "/*.html", "/css/**", "/js/**", "/assets/**", "/favicon.ico").permitAll()
                 .requestMatchers("/api/auth/signup", "/api/auth/signin", "/api/auth/csrf").permitAll()

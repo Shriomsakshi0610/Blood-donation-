@@ -196,14 +196,18 @@ async function initBackendHealthCheck() {
   const dot = pill.querySelector('.backend-status-dot');
   const text = pill.querySelector('.backend-status-text');
 
+  const apiUrl = window.bcApi.baseUrl;
+  const isLocal = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
+  const envLabel = isLocal ? '8080' : 'Render';
+
   if (isOnline) {
     if (dot) { dot.className = 'backend-status-dot online'; }
-    if (text) { text.textContent = 'API Connected (8080)'; }
-    pill.title = 'Java Spring Boot backend is actively running at http://localhost:8080';
+    if (text) { text.textContent = `API Connected (${envLabel})`; }
+    pill.title = `Java Spring Boot backend is actively running at ${apiUrl}`;
   } else {
     if (dot) { dot.className = 'backend-status-dot offline'; }
-    if (text) { text.textContent = 'Backend Offline'; }
-    pill.title = 'Backend offline. Click to see instructions to start Spring Boot.';
+    if (text) { text.textContent = `Backend Offline (${envLabel})`; }
+    pill.title = `Backend offline at ${apiUrl}. Click to see instructions.`;
   }
 
   pill.onclick = () => showBackendHelpModal(isOnline);
@@ -217,6 +221,9 @@ function showBackendHelpModal(isOnline) {
     modal.className = 'modal-backdrop';
     document.body.appendChild(modal);
   }
+
+  const apiUrl = window.bcApi.baseUrl;
+  const isLocal = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
 
   modal.innerHTML = `
     <div class="modal-dialog">
@@ -233,22 +240,30 @@ function showBackendHelpModal(isOnline) {
             ${isOnline ? '● Spring Boot Backend is Connected' : '▲ Spring Boot Backend is Offline'}
           </strong>
           <p style="font-size:0.88rem; margin-top:0.4rem; color:var(--text-secondary);">
-            Target URL: <code>http://localhost:8080</code><br>
+            Target URL: <code>${apiUrl}</code><br>
             Supported API Endpoints: <code>/api/auth/csrf</code>, <code>/api/auth/signup</code>, <code>/api/auth/signin</code>, <code>/api/auth/logout</code>, <code>/api/profile</code>
           </p>
         </div>
 
-        <h5>How to Run the Existing Backend:</h5>
+        <h5>${isLocal ? 'How to Run the Existing Backend Locally:' : 'Cloud Backend Connection:'}</h5>
+        ${isLocal ? `
         <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.75rem;">
           Open PowerShell or Terminal in the <code>blood-donation-backend</code> directory:
         </p>
         <pre style="background:var(--bg-input); padding:0.85rem; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.85rem; border:1px solid var(--border-color); overflow-x:auto;">
 cd blood-donation-backend
-mvn spring-boot:run</pre>
-
+./mvnw.cmd spring-boot:run</pre>
         <p style="font-size:0.82rem; color:var(--text-muted); margin-top:1rem;">
           Database: MySQL 8+ on <code>localhost:3306/blood_donation</code> with credentials from <code>application.properties</code>.
+        </p>` : `
+        <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.75rem;">
+          The production frontend connects securely over HTTPS with credentials and CSRF protection to:
         </p>
+        <pre style="background:var(--bg-input); padding:0.85rem; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.85rem; border:1px solid var(--border-color); overflow-x:auto;">
+${apiUrl}</pre>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:1rem;">
+          Hosted on Render Web Service with cross-origin session support.
+        </p>`}
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary btn-sm" onclick="closeModal('backend-help-modal')">Close</button>
