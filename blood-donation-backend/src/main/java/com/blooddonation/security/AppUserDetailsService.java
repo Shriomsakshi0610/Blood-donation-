@@ -18,10 +18,18 @@ public class AppUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmailIgnoreCase(email.trim())
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        String role = user.getRole();
+        if (role == null || role.isBlank()) {
+            role = "USER";
+        }
+        if (role.startsWith("ROLE_")) {
+            role = role.substring(5);
+        }
+
         return org.springframework.security.core.userdetails.User
             .withUsername(user.getEmail())
             .password(user.getPasswordHash())
-            .roles("USER")
+            .roles(role)
             .build();
     }
 }

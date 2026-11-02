@@ -52,6 +52,9 @@ public class User {
     @Column(name = "password_hash", nullable = false, length = 100)
     private String passwordHash;
 
+    @Column(name = "role", nullable = false, length = 20, columnDefinition = "varchar(20) default 'USER'")
+    private String role = "USER";
+
     @Column(name = "consent_accepted", nullable = false)
     private boolean consentAccepted;
 
@@ -69,6 +72,7 @@ public class User {
         Instant now = Instant.now();
         createdAt = now;
         updatedAt = now;
+        if (role == null || role.isBlank()) role = "USER";
         if (consentAcceptedAt == null && consentAccepted) consentAcceptedAt = now;
     }
 
@@ -100,6 +104,8 @@ public class User {
     public void setMedicalConditions(String v) { medicalConditions = v; }
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String v) { passwordHash = v; }
+    public String getRole() { return role != null ? role : "USER"; }
+    public void setRole(String v) { this.role = (v != null && !v.isBlank()) ? v : "USER"; }
     public boolean isConsentAccepted() { return consentAccepted; }
     public void setConsentAccepted(boolean v) { consentAccepted = v; }
     public Instant getConsentAcceptedAt() { return consentAcceptedAt; }

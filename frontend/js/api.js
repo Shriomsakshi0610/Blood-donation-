@@ -257,6 +257,34 @@ class BloodConnectApi {
     return updated;
   }
 
+  /**
+   * Real Database Public Statistics (GET /api/stats)
+   */
+  async getPublicStats() {
+    return this.request('/api/stats', { method: 'GET' });
+  }
+
+  /**
+   * Admin Server Health (GET /api/admin/health) - Enforced by ROLE_ADMIN
+   */
+  async getAdminHealth() {
+    return this.request('/api/admin/health', { method: 'GET' });
+  }
+
+  /**
+   * Admin Users Directory (GET /api/admin/users) - Enforced by ROLE_ADMIN
+   */
+  async getAdminUsers() {
+    return this.request('/api/admin/users', { method: 'GET' });
+  }
+
+  /**
+   * Admin Statistics (GET /api/admin/stats) - Enforced by ROLE_ADMIN
+   */
+  async getAdminStats() {
+    return this.request('/api/admin/stats', { method: 'GET' });
+  }
+
   /* =========================================================================
      Session State Helpers
      ========================================================================= */
@@ -278,6 +306,11 @@ class BloodConnectApi {
 
   isAuthenticated() {
     return !!this.getCurrentUser();
+  }
+
+  isAdmin() {
+    const user = this.getCurrentUser();
+    return !!(user && (user.role === 'ADMIN' || user.role === 'ROLE_ADMIN'));
   }
 
   clearSession() {

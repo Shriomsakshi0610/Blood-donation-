@@ -104,16 +104,19 @@ document.addEventListener('click', (e) => {
 });
 
 /**
- * Update Navbar with User Profile and Backend Status
+ * Update Navbar with User Profile and Role-Based Navigation
+ * Maintains exactly ONE user control in the header across desktop and mobile.
  */
 function updateNavbar() {
   const user = window.bcApi ? window.bcApi.getCurrentUser() : null;
   const navActions = document.getElementById('nav-auth-actions');
-  const mobileNavActions = document.getElementById('nav-mobile-auth-actions');
+  if (!navActions) return;
+
+  const isAdmin = user && (user.role === 'ADMIN' || user.role === 'ROLE_ADMIN');
 
   const authMarkup = user ? `
     <div class="user-menu-wrapper">
-      <button class="user-profile-btn" id="nav-user-toggle" onclick="toggleUserDropdown(event)">
+      <button class="user-profile-btn" id="nav-user-toggle" onclick="toggleUserDropdown(event)" aria-label="User account menu">
         <div class="user-avatar-circle">${(user.firstName || 'U')[0]}</div>
         <span>${user.firstName} ${user.lastName || ''}</span>
         <span class="badge badge-blood" style="font-size:0.75rem; padding:0.15rem 0.45rem;">${formatBloodGroup(user.bloodGroup)}</span>
@@ -128,10 +131,12 @@ function updateNavbar() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
           Recipient Requests
         </a>
-        <a href="admin-dashboard.html" class="user-dropdown-item">
+        ${isAdmin ? `
+        <a href="admin-dashboard.html" class="user-dropdown-item" style="color:var(--primary-red); font-weight:600;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           Admin Portal
         </a>
+        ` : ''}
         <div style="height:1px; background:var(--border-light); margin:0.35rem 0;"></div>
         <div class="user-dropdown-item text-danger" onclick="handleNavbarLogout()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -144,8 +149,7 @@ function updateNavbar() {
     <a href="register.html" class="btn btn-primary btn-sm">Become a Donor</a>
   `;
 
-  if (navActions) navActions.innerHTML = authMarkup;
-  if (mobileNavActions) mobileNavActions.innerHTML = authMarkup;
+  navActions.innerHTML = authMarkup;
 }
 
 function toggleUserDropdown(e) {
@@ -186,13 +190,12 @@ function initMobileNav() {
 }
 
 /**
- * Backend Connectivity Monitor
+ * Backend Connectivity Monitor (Strictly Restricted to Authorized Admin Dashboard)
  */
 async function initBackendHealthCheck() {
   const pill = document.getElementById('backend-status-indicator');
   if (!pill) return;
 
-  const isOnline = await window.bcApi.checkHealth();
   const dot = pill.querySelector('.backend-status-dot');
   const text = pill.querySelector('.backend-status-text');
 
@@ -200,20 +203,21 @@ async function initBackendHealthCheck() {
   const isLocal = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
   const envLabel = isLocal ? '8080' : 'Render';
 
-  if (isOnline) {
-    if (dot) { dot.className = 'backend-status-dot online'; }
-    if (text) { text.textContent = `API Connected (${envLabel})`; }
-    pill.title = `Java Spring Boot backend is actively running at ${apiUrl}`;
-  } else {
-    if (dot) { dot.className = 'backend-status-dot offline'; }
-    if (text) { text.textContent = `Backend Offline (${envLabel})`; }
-    pill.title = `Backend offline at ${apiUrl}. Click to see instructions.`;
+  try {
+    const health = await window.bcApi.getAdminHealth();
+    if (dot) dot.className = 'backend-status-dot online';
+    if (text) text.textContent = `Admin API (${envLabel})`;
+    pill.title = `Server: ${health.server} | DB: ${health.database} | JVM: ${health.jvmUsedMemoryMb}MB / ${health.jvmTotalMemoryMb}MB`;
+    pill.onclick = () => showBackendHelpModal(true, health);
+  } catch (err) {
+    if (dot) dot.className = 'backend-status-dot offline';
+    if (text) text.textContent = `API Offline (${envLabel})`;
+    pill.title = `Admin health check failed: ${err.message}`;
+    pill.onclick = () => showBackendHelpModal(false, null);
   }
-
-  pill.onclick = () => showBackendHelpModal(isOnline);
 }
 
-function showBackendHelpModal(isOnline) {
+function showBackendHelpModal(isOnline, healthData = null) {
   let modal = document.getElementById('backend-help-modal');
   if (!modal) {
     modal = document.createElement('div');
@@ -230,44 +234,31 @@ function showBackendHelpModal(isOnline) {
       <div class="modal-header">
         <h4 style="display:flex; align-items:center; gap:0.5rem;">
           <span style="color:var(--primary-red); font-size:1.4rem;">☕</span>
-          Java Spring Boot Backend Status
+          Administrator Server Health Monitor
         </h4>
         <button class="modal-close" onclick="closeModal('backend-help-modal')">✕</button>
       </div>
       <div class="modal-body">
         <div style="background:${isOnline ? 'rgba(34,197,94,0.1)' : 'rgba(245,158,11,0.1)'}; border:1px solid ${isOnline ? 'rgba(34,197,94,0.3)' : 'rgba(245,158,11,0.3)'}; border-radius:var(--radius-md); padding:1rem; margin-bottom:1.25rem;">
           <strong style="color:${isOnline ? 'var(--success)' : 'var(--warning)'}; display:flex; align-items:center; gap:0.5rem;">
-            ${isOnline ? '● Spring Boot Backend is Connected' : '▲ Spring Boot Backend is Offline'}
+            ${isOnline ? '● Spring Boot Backend is Active & Authorized' : '▲ Backend Health Verification Failed'}
           </strong>
           <p style="font-size:0.88rem; margin-top:0.4rem; color:var(--text-secondary);">
             Target URL: <code>${apiUrl}</code><br>
-            Supported API Endpoints: <code>/api/auth/csrf</code>, <code>/api/auth/signup</code>, <code>/api/auth/signin</code>, <code>/api/auth/logout</code>, <code>/api/profile</code>
+            ${healthData ? `JVM Memory: <strong>${healthData.jvmUsedMemoryMb} MB</strong> used / <strong>${healthData.jvmTotalMemoryMb} MB</strong> total<br>Database Connection: <strong>${healthData.database}</strong>` : 'Service responded with an error or is offline.'}
           </p>
         </div>
 
-        <h5>${isLocal ? 'How to Run the Existing Backend Locally:' : 'Cloud Backend Connection:'}</h5>
-        ${isLocal ? `
-        <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.75rem;">
-          Open PowerShell or Terminal in the <code>blood-donation-backend</code> directory:
-        </p>
-        <pre style="background:var(--bg-input); padding:0.85rem; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.85rem; border:1px solid var(--border-color); overflow-x:auto;">
-cd blood-donation-backend
-./mvnw.cmd spring-boot:run</pre>
-        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:1rem;">
-          Database: MySQL 8+ on <code>localhost:3306/blood_donation</code> with credentials from <code>application.properties</code>.
-        </p>` : `
-        <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.75rem;">
-          The production frontend connects securely over HTTPS with credentials and CSRF protection to:
-        </p>
+        <h5>Backend Service Information:</h5>
         <pre style="background:var(--bg-input); padding:0.85rem; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.85rem; border:1px solid var(--border-color); overflow-x:auto;">
 ${apiUrl}</pre>
-        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:1rem;">
-          Hosted on Render Web Service with cross-origin session support.
-        </p>`}
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.75rem;">
+          Protected by Spring Security role-based access control (ROLE_ADMIN).
+        </p>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary btn-sm" onclick="closeModal('backend-help-modal')">Close</button>
-        <button class="btn btn-primary btn-sm" onclick="initBackendHealthCheck().then(() => closeModal('backend-help-modal'))">Re-check Connection</button>
+        <button class="btn btn-primary btn-sm" onclick="initBackendHealthCheck().then(() => closeModal('backend-help-modal'))">Re-check Status</button>
       </div>
     </div>
   `;
@@ -278,5 +269,6 @@ ${apiUrl}</pre>
 document.addEventListener('DOMContentLoaded', () => {
   updateNavbar();
   initMobileNav();
-  initBackendHealthCheck();
+  // Note: Backend health monitor is strictly initialized inside the Admin Dashboard only.
+});
 });

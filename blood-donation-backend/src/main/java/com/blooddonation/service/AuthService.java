@@ -51,6 +51,7 @@ public class AuthService {
         user.setGender(request.gender());
         user.setMedicalConditions(cleanNullable(request.medicalConditions()));
         user.setPasswordHash(passwordEncoder.encode(request.password()));
+        user.setRole("USER");
         user.setConsentAccepted(true);
         user.setConsentAcceptedAt(Instant.now());
 

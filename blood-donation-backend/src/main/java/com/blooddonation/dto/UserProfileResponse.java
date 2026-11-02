@@ -11,7 +11,8 @@ public record UserProfileResponse(
     Long id, String firstName, String middleName, String lastName,
     String fatherName, String motherName, String email, String mobileNumber,
     LocalDate dateOfBirth, int age, BloodGroup bloodGroup, Gender gender,
-    String medicalConditions, boolean consentAccepted, Instant createdAt
+    String medicalConditions, boolean consentAccepted, Instant createdAt,
+    String role
 ) {
     public static UserProfileResponse from(User user) {
         int age = Period.between(user.getDateOfBirth(), LocalDate.now()).getYears();
@@ -19,7 +20,8 @@ public record UserProfileResponse(
             user.getId(), user.getFirstName(), user.getMiddleName(), user.getLastName(),
             user.getFatherName(), user.getMotherName(), user.getEmail(), user.getMobileNumber(),
             user.getDateOfBirth(), age, user.getBloodGroup(), user.getGender(),
-            user.getMedicalConditions(), user.isConsentAccepted(), user.getCreatedAt()
+            user.getMedicalConditions(), user.isConsentAccepted(), user.getCreatedAt(),
+            user.getRole()
         );
     }
 }

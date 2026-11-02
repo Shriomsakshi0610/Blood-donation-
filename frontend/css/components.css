@@ -249,15 +249,13 @@
     display: flex;
   }
   .nav-link { width: 100%; font-size: 1.05rem; }
-  .nav-actions { display: none; }
-  .nav-menu .nav-actions-mobile {
+  .nav-actions {
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .user-profile-btn span:not(.badge) {
+    display: none;
   }
 }
 

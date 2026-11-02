@@ -3,48 +3,87 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initStatsCounters();
+  loadRealHomepageStats();
   initQuickSearch();
   initCompatibilityWidget();
 });
 
 /**
- * Animated Statistics Counter
+ * Fetch and Render Real Database Statistics (GET /api/stats)
+ * No fake counters, no simulated numbers, and no fabricated claims.
  */
-function initStatsCounters() {
-  const statNumbers = document.querySelectorAll('.stat-number[data-target]');
-  
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateValue(entry.target);
-        obs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
+async function loadRealHomepageStats() {
+  const statDonors = document.getElementById('stat-registered-donors');
+  const statUsers = document.getElementById('stat-total-users');
+  const statBloodGroups = document.getElementById('stat-blood-groups');
+  const statDonations = document.getElementById('stat-donations');
+  const heroDonorCount = document.getElementById('hero-donor-count');
 
-  statNumbers.forEach(el => observer.observe(el));
+  try {
+    const stats = await window.bcApi.getPublicStats();
+    
+    // 1. Registered Donors (genuine database count)
+    const donorsCount = typeof stats.registeredDonors === 'number' ? stats.registeredDonors : 0;
+    if (statDonors) {
+      animateStat(statDonors, donorsCount);
+    }
+    if (heroDonorCount) {
+      heroDonorCount.textContent = donorsCount.toLocaleString();
+    }
+
+    // 2. Total Registered Users / Community Members
+    const usersCount = typeof stats.totalUsers === 'number' ? stats.totalUsers : 0;
+    if (statUsers) {
+      animateStat(statUsers, usersCount);
+    }
+
+    // 3. Blood Groups Represented in the Database
+    const bloodGroupsCount = typeof stats.bloodGroupsRepresented === 'number' ? stats.bloodGroupsRepresented : 0;
+    if (statBloodGroups) {
+      animateStat(statBloodGroups, bloodGroupsCount, '/ 8');
+    }
+
+    // 4. Verified Donations (Handled honestly: schema limitation)
+    if (statDonations) {
+      if (stats.totalDonations !== null && stats.totalDonations !== undefined) {
+        animateStat(statDonations, stats.totalDonations);
+      } else {
+        statDonations.innerHTML = `<span style="color:var(--text-muted); font-size:1.6rem;" title="Donation recording module is currently in development">—</span>`;
+      }
+    }
+  } catch (err) {
+    console.warn('[BloodConnect] Could not load statistics from backend:', err.message);
+    // Honest unavailable indicator on error / offline
+    const unavailableHtml = `<span style="color:var(--text-muted); font-size:1.6rem;" title="Statistics service unavailable">—</span>`;
+    if (statDonors) statDonors.innerHTML = unavailableHtml;
+    if (statUsers) statUsers.innerHTML = unavailableHtml;
+    if (statBloodGroups) statBloodGroups.innerHTML = unavailableHtml;
+    if (statDonations) statDonations.innerHTML = unavailableHtml;
+    if (heroDonorCount) heroDonorCount.textContent = '—';
+  }
 }
 
-function animateValue(element) {
-  const target = parseInt(element.getAttribute('data-target'), 10);
-  const suffix = element.getAttribute('data-suffix') || '';
-  const duration = 1800;
-  const start = 0;
+function animateStat(element, target, suffix = '') {
+  if (!element) return;
+  if (target === 0) {
+    element.innerHTML = `0${suffix ? `<span class="stat-suffix" style="font-size:0.9rem; color:var(--text-muted); margin-left:0.25rem;">${suffix}</span>` : ''}`;
+    return;
+  }
+
+  const duration = 1200;
   const startTime = performance.now();
 
   function update(currentTime) {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    // Ease out quart
-    const easeOut = 1 - Math.pow(1 - progress, 4);
-    const current = Math.floor(start + (target - start) * easeOut);
-    element.innerHTML = `${current.toLocaleString()}<span class="plus">${suffix}</span>`;
+    const easeOut = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(target * easeOut);
+    element.innerHTML = `${current.toLocaleString()}${suffix ? `<span class="stat-suffix" style="font-size:0.9rem; color:var(--text-muted); margin-left:0.25rem;">${suffix}</span>` : ''}`;
 
     if (progress < 1) {
       requestAnimationFrame(update);
     } else {
-      element.innerHTML = `${target.toLocaleString()}<span class="plus">${suffix}</span>`;
+      element.innerHTML = `${target.toLocaleString()}${suffix ? `<span class="stat-suffix" style="font-size:0.9rem; color:var(--text-muted); margin-left:0.25rem;">${suffix}</span>` : ''}`;
     }
   }
 
