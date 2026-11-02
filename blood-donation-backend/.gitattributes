@@ -1,0 +1,3 @@
+# Ensure Unix wrapper script always retains LF line endings
+mvnw text eol=lf
+mvnw.cmd text eol=crlf
