@@ -11,7 +11,7 @@
  * - PUT  /api/profile     -> Updates authenticated user's profile
  */
 
-const API_BASE_URL = window.API_BASE_URL || (window.location.origin && window.location.origin.includes('8080') ? window.location.origin : 'http://localhost:8080');
+const API_BASE_URL = window.API_BASE_URL || "https://blood-donation-1mnb.onrender.com";
 
 class BloodConnectApi {
   constructor() {

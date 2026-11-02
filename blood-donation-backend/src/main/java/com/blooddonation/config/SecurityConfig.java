@@ -48,21 +48,37 @@ public class SecurityConfig {
         return new HttpSessionSecurityContextRepository();
     }
 
+    
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of(
-            "http://localhost:[*]",
-            "http://127.0.0.1:[*]"
-        ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(List.of("Set-Cookie", "X-XSRF-TOKEN"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+
+    configuration.setAllowedOrigins(List.of(
+        "https://blood-donation-frontend-one.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+    ));
+
+    configuration.setAllowedMethods(List.of(
+        "GET", "POST", "PUT", "PATCH",
+        "DELETE", "OPTIONS", "HEAD"
+    ));
+
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowCredentials(true);
+
+    configuration.setExposedHeaders(List.of(
+        "Set-Cookie", "X-XSRF-TOKEN"
+    ));
+
+    UrlBasedCorsConfigurationSource source =
+        new UrlBasedCorsConfigurationSource();
+
+    source.registerCorsConfiguration("/**", configuration);
+
+    return source;
+}
 
     @Bean
     SecurityFilterChain securityFilterChain(
