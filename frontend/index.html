@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloodConnect — Give Blood, Save Lives | Voluntary Blood Donation Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF3038'><path d='M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z'/></svg>">
+</head>
+<body>
+
+  <!-- Emergency Alert Ticker -->
+  <div class="emergency-ticker">
+    <span class="badge-urgent">URGENT</span>
+    <span>Critical Need: <strong>O-Negative & B-Negative</strong> units needed in Delhi-NCR & Bengaluru healthcare networks.</span>
+    <a href="search.html?bloodGroup=O_NEGATIVE" style="color:#FFF; text-decoration:underline; font-weight:700; margin-left:0.5rem;">Respond Now →</a>
+  </div>
+
+  <!-- Main Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#FF3038"/>
+          <path d="M12 7v6m0 0l-2-2m2 2l2-2" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>Blood<span class="highlight">Connect</span></span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="search.html" class="nav-link">Find Donor</a></li>
+        <li><a href="register.html" class="nav-link">Donate Blood</a></li>
+        <li><a href="camps.html" class="nav-link">Camps</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li class="nav-actions-mobile" id="nav-mobile-auth-actions"></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Live Spring Boot Backend Status Pill -->
+        <div class="backend-status-pill" id="backend-status-indicator" title="Spring Boot Backend Status">
+          <span class="backend-status-dot offline"></span>
+          <span class="backend-status-text">Checking API...</span>
+        </div>
+
+        <div id="nav-auth-actions" style="display:flex; align-items:center; gap:0.75rem;">
+          <a href="login.html" class="btn btn-secondary btn-sm">Sign In</a>
+          <a href="register.html" class="btn btn-primary btn-sm">Become a Donor</a>
+        </div>
+      </div>
+
+      <button class="mobile-nav-toggle" aria-label="Toggle Navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-tagline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            24/7 Voluntary Blood Network
+          </div>
+          <h1 class="hero-headline">
+            Give Blood,<br>
+            <span class="text-gradient-red">Save Lives.</span>
+          </h1>
+          <p class="hero-description">
+            Connect voluntary blood donors with people in need — quickly, safely, and locally. A single donation can save up to three lives.
+          </p>
+          <div class="hero-cta">
+            <a href="search.html" class="btn btn-primary btn-lg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              Find Blood Donor
+            </a>
+            <a href="register.html" class="btn btn-secondary btn-lg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              Become a Donor
+            </a>
+          </div>
+        </div>
+
+        <!-- Glowing Hero Visual -->
+        <div class="hero-visual-wrapper">
+          <div class="hero-glow-sphere"></div>
+          
+          <div class="floating-pill pill-top-right">
+            <span style="color:var(--success); font-size:1.1rem;">●</span>
+            <span>2,410+ Donors Active Now</span>
+          </div>
+
+          <div class="hero-illustration-card">
+            <!-- Blood Bag & Pulse Visual -->
+            <div style="text-align:center; padding:1.5rem 0;">
+              <svg width="120" height="160" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 20px rgba(255,48,56,0.5));">
+                <!-- Bag Top hanger -->
+                <path d="M42 10C42 5.5 58 5.5 58 10V18H42V10Z" fill="#333340" stroke="rgba(255,255,255,0.2)"/>
+                <circle cx="50" cy="12" r="3" fill="#0B0B0F"/>
+                <!-- Bag body -->
+                <rect x="18" y="18" width="64" height="100" rx="14" fill="#181822" stroke="rgba(255,48,56,0.5)" stroke-width="2"/>
+                <!-- Liquid Fill with Wave -->
+                <path d="M20 62C30 58 40 66 50 62C60 58 70 66 80 62V104C80 111.7 73.7 118 66 118H34C26.3 118 20 111.7 20 104V62Z" fill="url(#bloodBagGrad)"/>
+                <!-- Volume Lines -->
+                <line x1="26" y1="75" x2="34" y2="75" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                <line x1="26" y1="88" x2="38" y2="88" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                <line x1="26" y1="101" x2="34" y2="101" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                <!-- Blood Group Text in bag -->
+                <text x="50" y="96" fill="#FFFFFF" font-family="'Inter', sans-serif" font-weight="800" font-size="20" text-anchor="middle">O+</text>
+                <!-- Tube -->
+                <path d="M50 118V132C50 136 54 139 58 139H70" stroke="#FF3038" stroke-width="3" stroke-linecap="round"/>
+                <defs>
+                  <linearGradient id="bloodBagGrad" x1="20" y1="62" x2="80" y2="118" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FF3038"/>
+                    <stop offset="1" stop-color="#9C0A12"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              <!-- Animated ECG Monitor Line -->
+              <div style="margin-top:1.25rem; background:rgba(0,0,0,0.4); padding:0.6rem; border-radius:var(--radius-md); border:1px solid rgba(255,48,56,0.2);">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">
+                  <span>HEART RATE</span>
+                  <span style="color:var(--primary-red); font-weight:700;">72 BPM • NORMAL</span>
+                </div>
+                <svg width="100%" height="32" viewBox="0 0 300 40" fill="none">
+                  <path d="M0 20 H70 L80 5 L90 35 L100 12 L110 24 L120 20 H200 L210 5 L220 35 L230 12 L240 24 L250 20 H300" stroke="#FF3038" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="floating-pill pill-bottom-left">
+            <span style="color:var(--primary-red); font-weight:800;">🩸 1 Unit</span>
+            <span>= 3 Lives Saved</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Search Banner -->
+  <div class="container">
+    <div class="search-banner-card">
+      <div style="margin-bottom:1.25rem;">
+        <h3 style="font-size:1.35rem; margin-bottom:0.25rem;">Find a Voluntary Blood Donor</h3>
+        <p style="font-size:0.9rem;">Search verified voluntary donors by blood type and location</p>
+      </div>
+
+      <form id="home-quick-search-form" class="search-form-inline">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Blood Group</label>
+          <select id="quick-blood-group" class="form-select">
+            <option value="ALL">All Blood Groups</option>
+            <option value="A_POSITIVE">A+ (A Positive)</option>
+            <option value="A_NEGATIVE">A- (A Negative)</option>
+            <option value="B_POSITIVE">B+ (B Positive)</option>
+            <option value="B_NEGATIVE">B- (B Negative)</option>
+            <option value="AB_POSITIVE">AB+ (AB Positive)</option>
+            <option value="AB_NEGATIVE">AB- (AB Negative)</option>
+            <option value="O_POSITIVE">O+ (O Positive)</option>
+            <option value="O_NEGATIVE">O- (O Negative)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">City or PIN Code</label>
+          <input type="text" id="quick-city" class="form-control" placeholder="e.g. Bengaluru, Delhi, Mumbai, 560001">
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Distance Radius</label>
+          <select class="form-select">
+            <option value="10">Within 10 km</option>
+            <option value="25" selected>Within 25 km</option>
+            <option value="50">Within 50 km</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="height:46px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          Search Donors
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <section class="stats-section section" style="margin-top:4rem;">
+    <div class="container">
+      <div class="grid grid-4">
+        <div class="stat-card">
+          <div class="stat-number" data-target="48500" data-suffix="+">0</div>
+          <div class="stat-label">Registered Donors</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" data-target="120000" data-suffix="+">0</div>
+          <div class="stat-label">Lives Supported</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" data-target="350" data-suffix="+">0</div>
+          <div class="stat-label">Partner Hospitals</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" data-target="1420" data-suffix="+">0</div>
+          <div class="stat-label">Donation Camps Organized</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How BloodConnect Works -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Direct & Verified</span>
+        <h2>How BloodConnect Works</h2>
+        <p>A transparent and secure workflow connecting voluntary donors directly with patients and hospitals in emergency situations.</p>
+      </div>
+
+      <div class="grid grid-4">
+        <div class="step-card">
+          <span class="step-number">01</span>
+          <div class="step-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          </div>
+          <h4>Register Account</h4>
+          <p>Sign up voluntary donor details, blood group, medical history, and location securely.</p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-number">02</span>
+          <div class="step-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+          <h4>Search & Match</h4>
+          <p>Filter compatible blood groups near the patient’s hospital with proximity algorithms.</p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-number">03</span>
+          <div class="step-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <h4>Connect Directly</h4>
+          <p>Send an emergency push request with patient details while safeguarding donor privacy.</p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-number">04</span>
+          <div class="step-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </div>
+          <h4>Save Lives</h4>
+          <p>Donation completes safely at certified hospital blood banks, saving lives in real time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Blood Compatibility Section -->
+  <section class="section" style="background:var(--bg-secondary); border-top:1px solid var(--border-color); border-bottom:1px solid var(--border-color);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Medical Science</span>
+        <h2>Blood Type Compatibility</h2>
+        <p>Click your blood type to discover your donation compatibility matrix and healthcare impact.</p>
+      </div>
+
+      <div style="display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; margin-bottom:2rem;">
+        <button class="btn btn-secondary compat-btn active" data-bg="O_POSITIVE">O+</button>
+        <button class="btn btn-secondary compat-btn" data-bg="O_NEGATIVE">O-</button>
+        <button class="btn btn-secondary compat-btn" data-bg="A_POSITIVE">A+</button>
+        <button class="btn btn-secondary compat-btn" data-bg="A_NEGATIVE">A-</button>
+        <button class="btn btn-secondary compat-btn" data-bg="B_POSITIVE">B+</button>
+        <button class="btn btn-secondary compat-btn" data-bg="B_NEGATIVE">B-</button>
+        <button class="btn btn-secondary compat-btn" data-bg="AB_POSITIVE">AB+</button>
+        <button class="btn btn-secondary compat-btn" data-bg="AB_NEGATIVE">AB-</button>
+      </div>
+
+      <div id="compat-details-box" class="card card-glow" style="max-width:760px; margin:0 auto;">
+        <!-- Filled dynamically by home.js -->
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+          <h4 style="display:flex; align-items:center; gap:0.5rem;">
+            <span class="badge badge-blood">O+</span>
+            <span>Most Needed Common Blood Type</span>
+          </h4>
+        </div>
+        <div class="grid grid-2 gap-2">
+          <div style="background:var(--bg-input); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+            <div style="font-size:0.82rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; margin-bottom:0.5rem;">You Can Donate Blood To:</div>
+            <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
+              <span class="badge badge-success">O+</span>
+              <span class="badge badge-success">A+</span>
+              <span class="badge badge-success">B+</span>
+              <span class="badge badge-success">AB+</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-input); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color);">
+            <div style="font-size:0.82rem; text-transform:uppercase; color:var(--text-muted); font-weight:600; margin-bottom:0.5rem;">You Can Receive Blood From:</div>
+            <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
+              <span class="badge badge-info">O+</span>
+              <span class="badge badge-info">O-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming Camps Highlight -->
+  <section class="section">
+    <div class="container">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:2.5rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <span class="section-tag" style="margin-bottom:0.5rem;">Community Drives</span>
+          <h2>Upcoming Donation Camps</h2>
+          <p>Join a certified mobile blood drive in your city organized by verified healthcare partners.</p>
+        </div>
+        <a href="camps.html" class="btn btn-outline">View All Camps →</a>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="camp-card">
+          <div class="camp-card-image">
+            <div class="camp-date-badge">
+              <div class="day">08</div>
+              <div class="month">NOV</div>
+            </div>
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,48,56,0.3)" stroke-width="1.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </div>
+          <div class="camp-card-body">
+            <div>
+              <div style="font-size:0.8rem; color:var(--primary-red); font-weight:600; text-transform:uppercase; margin-bottom:0.35rem;">Red Cross & Rotary</div>
+              <h4>Metro LifeLine Mega Drive</h4>
+              <p class="venue">Community Centre, Indiranagar, Bengaluru</p>
+              <div style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:1rem;">🕒 09:00 AM - 04:00 PM • Target: 250 Units</div>
+            </div>
+            <a href="camps.html" class="btn btn-primary btn-sm btn-block">Join as Donor</a>
+          </div>
+        </div>
+
+        <div class="camp-card">
+          <div class="camp-card-image">
+            <div class="camp-date-badge">
+              <div class="day">12</div>
+              <div class="month">NOV</div>
+            </div>
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,48,56,0.3)" stroke-width="1.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </div>
+          <div class="camp-card-body">
+            <div>
+              <div style="font-size:0.8rem; color:var(--primary-red); font-weight:600; text-transform:uppercase; margin-bottom:0.35rem;">BloodConnect Foundation</div>
+              <h4>Corporate Life Savers Camp</h4>
+              <p class="venue">DLF Cyber City, Tower B Concourse, Gurugram</p>
+              <div style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:1rem;">🕒 10:00 AM - 05:00 PM • Target: 300 Units</div>
+            </div>
+            <a href="camps.html" class="btn btn-primary btn-sm btn-block">Join as Donor</a>
+          </div>
+        </div>
+
+        <div class="camp-card">
+          <div class="camp-card-image">
+            <div class="camp-date-badge">
+              <div class="day">16</div>
+              <div class="month">NOV</div>
+            </div>
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(255,48,56,0.3)" stroke-width="1.5"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </div>
+          <div class="camp-card-body">
+            <div>
+              <div style="font-size:0.8rem; color:var(--primary-red); font-weight:600; text-transform:uppercase; margin-bottom:0.35rem;">NSS Cell & Lions Blood Bank</div>
+              <h4>University Blood Heroes Camp</h4>
+              <p class="venue">St. Xavier's College Quadrangle, Mumbai</p>
+              <div style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:1rem;">🕒 08:30 AM - 03:30 PM • Target: 180 Units</div>
+            </div>
+            <a href="camps.html" class="btn btn-primary btn-sm btn-block">Join as Donor</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="section" style="padding-top:1rem;">
+    <div class="container">
+      <div class="card card-glow" style="background:linear-gradient(135deg, rgba(255,48,56,0.18) 0%, rgba(20,20,26,0.95) 100%); padding:3.5rem 2.5rem; text-align:center;">
+        <h2 style="font-size:2.4rem; margin-bottom:1rem;">Ready to Become Someone's Hero?</h2>
+        <p style="max-width:620px; margin:0 auto 2rem; font-size:1.1rem;">
+          Registering takes less than 2 minutes and directly impacts families in emergency need across partner hospitals.
+        </p>
+        <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap;">
+          <a href="register.html" class="btn btn-primary btn-lg">Register as Voluntary Donor</a>
+          <a href="search.html" class="btn btn-secondary btn-lg">Search Donors Near Me</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="index.html" class="brand-logo" style="margin-bottom:1.25rem;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:28px; height:28px;">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#FF3038"/>
+            </svg>
+            <span>Blood<span class="highlight">Connect</span></span>
+          </a>
+          <p style="font-size:0.9rem; margin-bottom:1rem;">
+            Empowering voluntary blood donation through verified direct connections, hospital collaboration, and community-led emergency response.
+          </p>
+          <div class="footer-emergency-box">
+            <span style="font-size:0.78rem; text-transform:uppercase; color:var(--text-muted); font-weight:600;">24/7 Emergency Helpline</span>
+            <span class="phone">+91 1800-BLOOD-CONNECT</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Platform</h5>
+          <ul class="footer-links">
+            <li><a href="search.html">Find Blood Donors</a></li>
+            <li><a href="register.html">Become a Donor</a></li>
+            <li><a href="camps.html">Donation Camps</a></li>
+            <li><a href="donor-dashboard.html">Donor Dashboard</a></li>
+            <li><a href="recipient-dashboard.html">Recipient Requests</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Resources</h5>
+          <ul class="footer-links">
+            <li><a href="about.html">About BloodConnect</a></li>
+            <li><a href="about.html#compatibility">Compatibility Chart</a></li>
+            <li><a href="about.html#eligibility">Eligibility Criteria</a></li>
+            <li><a href="admin-dashboard.html">Hospital & Admin Portal</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Java Backend Info</h5>
+          <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:0.75rem;">
+            Connected to Spring Boot backend at <code>http://localhost:8080</code> with session security, BCrypt hashing, and CSRF protection.
+          </p>
+          <div style="font-size:0.82rem; color:var(--text-muted);">
+            Active Endpoints:<br>
+            • <code>/api/auth/csrf</code><br>
+            • <code>/api/auth/signup</code><br>
+            • <code>/api/auth/signin</code><br>
+            • <code>/api/profile</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 BloodConnect. All rights reserved. Strictly non-commercial voluntary blood donation initiative.</div>
+        <div style="display:flex; gap:1.5rem;">
+          <a href="about.html" style="color:var(--text-muted);">Privacy Policy</a>
+          <a href="about.html" style="color:var(--text-muted);">Terms of Service</a>
+          <a href="about.html" style="color:var(--text-muted);">Medical Disclaimer</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

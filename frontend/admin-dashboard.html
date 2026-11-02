@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — BloodConnect Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboards.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF3038'><path d='M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z'/></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#FF3038"/>
+        </svg>
+        <span>Blood<span class="highlight">Connect</span> <span style="font-size:0.75rem; background:rgba(255,48,56,0.2); color:var(--primary-red); padding:0.2rem 0.5rem; border-radius:var(--radius-pill); border:1px solid rgba(255,48,56,0.4); margin-left:0.4rem;">ADMIN</span></span>
+      </a>
+
+      <div class="nav-actions">
+        <div class="backend-status-pill" id="backend-status-indicator" title="Spring Boot Backend Status">
+          <span class="backend-status-dot offline"></span>
+          <span class="backend-status-text">Checking API...</span>
+        </div>
+        <div id="nav-auth-actions"></div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-wrapper">
+    <!-- Admin Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div>
+        <div class="sidebar-user-brief">
+          <div class="sidebar-avatar" style="background:var(--primary-red-gradient);">A</div>
+          <div class="sidebar-user-info">
+            <h5 class="user-full-name">System Administrator</h5>
+            <p><span class="badge badge-danger" style="font-size:0.72rem; padding:0.15rem 0.45rem;">Admin Access</span></p>
+          </div>
+        </div>
+
+        <ul class="sidebar-nav">
+          <li>
+            <a href="#overview" class="sidebar-link active" data-tab="overview">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+              Overview
+            </a>
+          </li>
+          <li>
+            <a href="#users" class="sidebar-link" data-tab="users">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Users & Donors
+            </a>
+          </li>
+          <li>
+            <a href="#requests" class="sidebar-link" data-tab="requests">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              Blood Requests
+            </a>
+          </li>
+          <li>
+            <a href="camps.html" class="sidebar-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Donation Camps
+            </a>
+          </li>
+          <li>
+            <a href="#verification" class="sidebar-link" data-tab="verification">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Verification Queue
+            </a>
+          </li>
+          <li>
+            <a href="#reports" class="sidebar-link" data-tab="reports">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              Reports & Analytics
+            </a>
+          </li>
+          <li>
+            <a href="#settings" class="sidebar-link" data-tab="settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Settings
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-bottom">
+        <a href="javascript:void(0)" onclick="handleNavbarLogout()" class="sidebar-link" style="color:var(--danger);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <div class="welcome-title">
+          <h2>Platform Operations & Analytics</h2>
+          <p>National Voluntary Blood Donation Monitoring System</p>
+        </div>
+
+        <div class="dashboard-header-actions">
+          <button class="btn btn-secondary btn-sm" onclick="alert('Exporting verified donor database audit report (CSV)...')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export Audit Report
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB 1: OVERVIEW -->
+      <div id="panel-overview" class="dashboard-panel active">
+        <!-- KPI Metrics -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap red">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="kpi-details">
+              <div class="kpi-num">48,512</div>
+              <div class="kpi-title">Registered Donors</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap green">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </div>
+            <div class="kpi-details">
+              <div class="kpi-num">1,840</div>
+              <div class="kpi-title">Units This Month</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap yellow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="kpi-details">
+              <div class="kpi-num">14</div>
+              <div class="kpi-title">Critical Requests</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="kpi-details">
+              <div class="kpi-num">1,420</div>
+              <div class="kpi-title">Total Camps Held</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Distribution Chart -->
+        <div class="chart-container">
+          <div class="chart-header">
+            <div>
+              <h4>Real-time Blood Bank Inventory Levels</h4>
+              <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">Current reserve units available across partner hospital blood banks</p>
+            </div>
+            <span class="badge badge-warning">AB- & O- Low Stock</span>
+          </div>
+          <div id="inventory-chart-bars" style="display:flex; gap:1.25rem; align-items:flex-end; padding:1.5rem 0 0.5rem; overflow-x:auto;">
+            <!-- Populated by admin-dashboard.js -->
+          </div>
+        </div>
+
+        <!-- Registered Donors Table -->
+        <div class="card" style="margin-top:2rem;">
+          <div class="panel-header" style="flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h4>Registered Voluntary Users & Donors</h4>
+              <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">Database records synced with Spring Boot User repository</p>
+            </div>
+            <input type="text" id="admin-user-search" class="form-control" placeholder="Search by name or email..." style="max-width:260px; padding:0.45rem 0.85rem; font-size:0.88rem;">
+          </div>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Name & Email</th>
+                  <th>Blood Group</th>
+                  <th>Mobile Number</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-table-body">
+                <!-- Populated by admin-dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: BLOOD REQUESTS -->
+      <div id="panel-requests" class="dashboard-panel">
+        <div class="panel-header">
+          <h3>Emergency Blood Broadcast Queue</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Request ID</th>
+                <th>Hospital</th>
+                <th>City</th>
+                <th>Blood Group</th>
+                <th>Units</th>
+                <th>Urgency</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-requests-table-body">
+              <!-- Populated by admin-dashboard.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: VERIFICATION QUEUE -->
+      <div id="panel-verification" class="dashboard-panel">
+        <div class="panel-header">
+          <h3>Donor Identity Verification Queue</h3>
+          <p>Review uploaded government IDs and blood group certificates.</p>
+        </div>
+        <div class="card">
+          <p style="color:var(--text-secondary); font-size:0.92rem;">
+            No pending manual verifications. Automated phone and email checks are active on all new signups through <code>/api/auth/signup</code>.
+          </p>
+        </div>
+      </div>
+
+      <!-- TAB 4: REPORTS -->
+      <div id="panel-reports" class="dashboard-panel">
+        <div class="panel-header">
+          <h3>Audit & Compliance Reports</h3>
+        </div>
+        <div class="grid grid-3">
+          <div class="card">
+            <h4>Monthly Donation Trends</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin:0.5rem 0 1rem;">Complete logs of all donor interactions and fulfilled emergency requests.</p>
+            <button class="btn btn-outline btn-sm" onclick="alert('Downloading Monthly Trends PDF...')">Download PDF</button>
+          </div>
+          <div class="card">
+            <h4>Hospital Inventory Report</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin:0.5rem 0 1rem;">Stock turnover rates, shelf-life compliance, and deficit projections.</p>
+            <button class="btn btn-outline btn-sm" onclick="alert('Downloading Hospital Inventory PDF...')">Download PDF</button>
+          </div>
+          <div class="card">
+            <h4>Data Privacy & GDPR Log</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin:0.5rem 0 1rem;">User consent audit trails matching Spring Boot consent_accepted timestamp.</p>
+            <button class="btn btn-outline btn-sm" onclick="alert('Downloading Privacy Audit Log...')">Download PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: SETTINGS -->
+      <div id="panel-settings" class="dashboard-panel">
+        <div class="panel-header">
+          <h3>Spring Boot Backend Connection Settings</h3>
+        </div>
+        <div class="card" style="max-width:700px;">
+          <div class="form-group">
+            <label class="form-label">Spring Boot Backend Base URL</label>
+            <input type="text" id="setting-backend-url" class="form-control" value="http://localhost:8080">
+            <small style="color:var(--text-muted); font-size:0.8rem; margin-top:0.35rem; display:block;">
+              Matches <code>server.port=8080</code> defined in <code>application.properties</code>.
+            </small>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveBackendUrlSetting()">Save Backend URL</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/admin-dashboard.js"></script>
+  <script>
+    function saveBackendUrlSetting() {
+      const val = document.getElementById('setting-backend-url').value.trim();
+      if (val) {
+        window.API_BASE_URL = val;
+        window.bcApi.baseUrl = val;
+        showToast('Settings Saved', `Backend URL set to ${val}. Re-checking connection...`, 'info');
+        initBackendHealthCheck();
+      }
+    }
+  </script>
+</body>
+</html>

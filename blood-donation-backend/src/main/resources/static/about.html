@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us & Donation Guidelines — BloodConnect</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF3038'><path d='M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z'/></svg>">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="index.html" class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#FF3038"/>
+        </svg>
+        <span>Blood<span class="highlight">Connect</span></span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="search.html" class="nav-link">Find Donor</a></li>
+        <li><a href="register.html" class="nav-link">Donate Blood</a></li>
+        <li><a href="camps.html" class="nav-link">Camps</a></li>
+        <li><a href="about.html" class="nav-link active">About</a></li>
+        <li class="nav-actions-mobile" id="nav-mobile-auth-actions"></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="backend-status-pill" id="backend-status-indicator" title="Backend Status">
+          <span class="backend-status-dot offline"></span>
+          <span class="backend-status-text">Checking API...</span>
+        </div>
+        <div id="nav-auth-actions"></div>
+      </div>
+
+      <button class="mobile-nav-toggle" aria-label="Toggle Navigation">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Header -->
+  <section class="section" style="padding-top:3.5rem; padding-bottom:2rem;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Our Mission</span>
+        <h1 style="font-size:2.5rem; margin-top:0.4rem;">Connecting Donors, Saving Lives</h1>
+        <p>
+          BloodConnect is a voluntary, non-profit digital blood donation platform designed to bridge the gap between voluntary donors and critical patients during medical emergencies.
+        </p>
+      </div>
+
+      <!-- Core Values 3-Col -->
+      <div class="grid grid-3" style="margin-bottom:4rem;">
+        <div class="card card-glow">
+          <div style="font-size:2rem; margin-bottom:1rem;">🛡️</div>
+          <h4>Zero Commercialization</h4>
+          <p style="margin-top:0.5rem; font-size:0.92rem;">
+            We operate strictly under the National Blood Policy. Blood is a gift of life; our platform is 100% free, voluntary, and non-commercial.
+          </p>
+        </div>
+
+        <div class="card card-glow">
+          <div style="font-size:2rem; margin-bottom:1rem;">⚡</div>
+          <h4>Speed in Emergencies</h4>
+          <p style="margin-top:0.5rem; font-size:0.92rem;">
+            When traumatic injuries or emergency surgeries occur, every second counts. Our proximity matcher alerts matching local donors within minutes.
+          </p>
+        </div>
+
+        <div class="card card-glow">
+          <div style="font-size:2rem; margin-bottom:1rem;">🔒</div>
+          <h4>Privacy & Security First</h4>
+          <p style="margin-top:0.5rem; font-size:0.92rem;">
+            Exact donor addresses are never exposed publicly. Direct contact occurs only through authenticated, emergency-verified hospital channels.
+          </p>
+        </div>
+      </div>
+
+      <!-- Eligibility Checklist Section -->
+      <div id="eligibility" class="card" style="padding:2.5rem; margin-bottom:4rem;">
+        <div class="panel-header">
+          <div>
+            <h3>Can I Donate Blood? — Eligibility Criteria</h3>
+            <p>Standard medical guidelines recommended by the National Blood Transfusion Council (NBTC).</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="gap:2rem;">
+          <div>
+            <h4 style="color:var(--success); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              <span>✓</span> Basic Requirements
+            </h4>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:0.75rem; font-size:0.92rem; color:var(--text-secondary);">
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-success">Age</span> Between 18 and 65 years old
+              </li>
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-success">Weight</span> Minimum 45 kg (99 lbs)
+              </li>
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-success">Hemoglobin</span> 12.5 g/dL or higher
+              </li>
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-success">Pulse</span> 50 to 100 beats/minute, regular
+              </li>
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-success">Interval</span> Minimum 90 days (3 months) since last whole blood donation
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="color:var(--danger); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+              <span>✕</span> Temporary Deferrals
+            </h4>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:0.75rem; font-size:0.92rem; color:var(--text-secondary);">
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-danger">Tattoo/Piercing</span> Defer for 6 months after procedure
+              </li>
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-danger">Dental Surgery</span> Defer for 72 hours to 1 month
+              </li>
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-danger">Antibiotics</span> Defer until 7 days after course completion
+              </li>
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-danger">Vaccinations</span> Defer for 14-28 days depending on vaccine
+              </li>
+              <li style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="badge badge-danger">Pregnancy</span> Defer during pregnancy and 12 months post-delivery
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compatibility Matrix -->
+      <div id="compatibility" class="card" style="padding:2.5rem; margin-bottom:4rem;">
+        <div class="panel-header">
+          <div>
+            <h3>Comprehensive Blood Group Compatibility Matrix</h3>
+            <p>Red Blood Cell compatibility between recipient and donor antigens.</p>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table" style="text-align:center;">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Recipient Blood Type</th>
+                <th>O-</th>
+                <th>O+</th>
+                <th>B-</th>
+                <th>B+</th>
+                <th>A-</th>
+                <th>A+</th>
+                <th>AB-</th>
+                <th>AB+</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left; font-weight:700;"><span class="badge badge-blood">O-</span></td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+              </tr>
+              <tr>
+                <td style="text-align:left; font-weight:700;"><span class="badge badge-blood">O+</span></td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+              </tr>
+              <tr>
+                <td style="text-align:left; font-weight:700;"><span class="badge badge-blood">A-</span></td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+              </tr>
+              <tr>
+                <td style="text-align:left; font-weight:700;"><span class="badge badge-blood">A+</span></td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+              </tr>
+              <tr>
+                <td style="text-align:left; font-weight:700;"><span class="badge badge-blood">B-</span></td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+              </tr>
+              <tr>
+                <td style="text-align:left; font-weight:700;"><span class="badge badge-blood">B+</span></td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--text-muted);">NO</td>
+              </tr>
+              <tr>
+                <td style="text-align:left; font-weight:700;"><span class="badge badge-blood">AB-</span></td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--text-muted);">NO</td>
+              </tr>
+              <tr>
+                <td style="text-align:left; font-weight:700;"><span class="badge badge-blood">AB+</span></td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+                <td style="color:var(--success); font-weight:800;">YES</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Contact Us / Emergency Support Form -->
+      <div class="card card-glow" style="max-width:720px; margin:0 auto 3rem;">
+        <h3 style="margin-bottom:0.5rem; text-align:center;">Need Assistance or Have Questions?</h3>
+        <p style="text-align:center; color:var(--text-secondary); margin-bottom:2rem;">
+          Our volunteer coordination helpline operates 24/7 for urgent hospital verification and blood drive queries.
+        </p>
+
+        <form onsubmit="event.preventDefault(); showToast('Message Sent', 'Thank you! Our support coordinator will reach out shortly.', 'success'); this.reset();">
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label class="form-label">Your Name</label>
+              <input type="text" class="form-control" placeholder="Full name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email or Mobile</label>
+              <input type="text" class="form-control" placeholder="Email or 10-digit mobile" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input type="text" class="form-control" placeholder="e.g. Hospital partnership / Volunteer inquiry" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-control" placeholder="How can our volunteer team help you?" required></textarea>
+          </div>
+          <div style="text-align:center; margin-top:1.5rem;">
+            <button type="submit" class="btn btn-primary btn-lg">Send Inquiry</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding:0;">
+        <div>© 2026 BloodConnect • Dedicated to voluntary blood donation</div>
+        <div>Spring Boot Base URL: <code>http://localhost:8080</code></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+</body>
+</html>
