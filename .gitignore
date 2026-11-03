@@ -1,0 +1,6 @@
+blood-donation-backend/data/
+**/data/
+*.db
+target/
+.vscode/
+.idea/

@@ -8,6 +8,12 @@
 let currentUserProfile = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Enforce authentication on protected dashboard
+  if (typeof enforceProtectedRoute === 'function') {
+    const isAllowed = enforceProtectedRoute(['USER', 'ADMIN', 'ROLE_ADMIN']);
+    if (!isAllowed) return;
+  }
+
   initDashboardTabs();
   initAvailabilityToggle();
   await loadDonorProfile();
@@ -49,36 +55,31 @@ async function loadDonorProfile() {
   if (profileLoading) profileLoading.style.display = 'block';
 
   try {
-    // Attempt fetching real profile from backend
     currentUserProfile = await window.bcApi.getProfile();
     console.log('[BloodConnect] Real Profile Loaded from Spring Boot:', currentUserProfile);
     renderProfileData(currentUserProfile, true);
   } catch (err) {
     console.warn('[BloodConnect] Could not load profile from backend:', err.message);
-    
-    // Check if session has user or fallback to starter donor profile
+
+    if (err.status === 401) {
+      window.bcApi.clearSession();
+      showToast('Session Expired', 'Your session has expired. Please sign in again.', 'warning');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 500);
+      return;
+    }
+
+    // Check if session has user cached
     const cached = window.bcApi.getCurrentUser();
     if (cached) {
       currentUserProfile = cached;
       renderProfileData(currentUserProfile, false);
-      showToast('Offline Mode', 'Showing local session profile. Spring Boot backend is unreachable.', 'warning');
+      showToast('Offline Mode', 'Showing local session profile while backend syncs.', 'info');
     } else {
-      // Default placeholder donor profile so the dashboard is fully interactive
-      currentUserProfile = {
-        firstName: 'Rahul',
-        middleName: 'Kumar',
-        lastName: 'Sharma',
-        email: 'rahul.sharma@example.com',
-        mobileNumber: '9876543210',
-        bloodGroup: 'O_POSITIVE',
-        gender: 'MALE',
-        dateOfBirth: '1998-05-14',
-        age: 28,
-        medicalConditions: 'No pre-existing conditions. Hemoglobin 14.5 g/dL.',
-        consentAccepted: true,
-        createdAt: '2026-01-10T10:00:00Z'
-      };
-      renderProfileData(currentUserProfile, false);
+      // No authenticated user found, redirect to login
+      window.location.href = 'login.html';
+      return;
     }
   } finally {
     if (profileLoading) profileLoading.style.display = 'none';
@@ -86,6 +87,8 @@ async function loadDonorProfile() {
 }
 
 function renderProfileData(user, isBackendLive) {
+  if (!user) return;
+
   // Update header greetings
   const greeting = document.getElementById('donor-welcome-name');
   if (greeting) greeting.textContent = user.firstName || 'Donor';
@@ -100,14 +103,25 @@ function renderProfileData(user, isBackendLive) {
 
   // Update email and mobile
   const emails = document.querySelectorAll('.user-email-text');
-  emails.forEach(em => em.textContent = user.email);
+  emails.forEach(em => em.textContent = user.email || '—');
 
   const mobiles = document.querySelectorAll('.user-mobile-text');
   mobiles.forEach(m => m.textContent = user.mobileNumber || '—');
 
   // Update Age & Gender
   const ageElem = document.getElementById('user-age-text');
-  if (ageElem) ageElem.textContent = user.age ? `${user.age} years` : '28 years';
+  if (ageElem) {
+    if (user.age !== undefined && user.age !== null) {
+      ageElem.textContent = `${user.age} years`;
+    } else if (user.dateOfBirth) {
+      const birth = new Date(user.dateOfBirth);
+      const diff = Date.now() - birth.getTime();
+      const calcAge = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+      ageElem.textContent = `${calcAge} years`;
+    } else {
+      ageElem.textContent = '—';
+    }
+  }
 
   const genderElem = document.getElementById('user-gender-text');
   if (genderElem) genderElem.textContent = formatGender(user.gender);
@@ -213,7 +227,6 @@ async function loadNearbyMatchingRequests() {
   if (!container) return;
 
   const requests = await window.bcApi.getBloodRequests();
-  // Filter for matching urgency or relevant blood groups
   const urgentList = requests.slice(0, 3);
 
   container.innerHTML = urgentList.map(req => `

@@ -1,6 +1,7 @@
 package com.blooddonation.config;
 
 import com.blooddonation.security.AppUserDetailsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,13 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    @Value("${COOKIE_SECURE:false}")
+    private boolean cookieSecure;
+
+    @Value("${COOKIE_SAME_SITE:Lax}")
+    private String cookieSameSite;
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -60,7 +68,8 @@ public class SecurityConfig {
             "http://localhost:3000",
             "http://localhost:5500",
             "http://127.0.0.1:5500",
-            "http://localhost:8080"
+            "http://localhost:8080",
+            "null"
         ));
 
         configuration.setAllowedOriginPatterns(List.of(
@@ -102,8 +111,8 @@ public class SecurityConfig {
 
         CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         csrfTokenRepository.setCookieCustomizer(customizer -> customizer
-            .sameSite("None")
-            .secure(true)
+            .sameSite(cookieSameSite)
+            .secure(cookieSecure)
             .path("/")
         );
 
