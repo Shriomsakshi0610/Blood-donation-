@@ -6,14 +6,15 @@
 class BloodConnectApi {
   constructor() {
     this.cloudBaseUrl = 'https://blood-donation-1mnb.onrender.com';
-    this.localBaseUrl = 'http://localhost:8080';
+    const host = (typeof window !== 'undefined' && window.location.hostname === '127.0.0.1') ? '127.0.0.1' : 'localhost';
+    this.localBaseUrl = `http://${host}:8080`;
 
     // Check manual override first
     const saved = (typeof localStorage !== 'undefined') ? localStorage.getItem('bloodconnect_api_url') : null;
     if (saved) {
       this.baseUrl = saved.replace(/\/+$/, '');
     } else {
-      // Default initial assumption: if on localhost/127.0.0.1, try localhost:8080 first
+      // Default initial assumption: match current host for zero-friction local development
       const isLocalHost = (typeof window !== 'undefined') && (
         window.location.hostname === 'localhost' ||
         window.location.hostname === '127.0.0.1' ||
