@@ -35,6 +35,48 @@ function formatGender(val) {
 }
 
 /**
+ * Route Guard: Protect authenticated pages
+ */
+function enforceProtectedRoute(allowedRoles = null) {
+  if (!window.bcApi) return true;
+  const user = window.bcApi.getCurrentUser();
+  if (!user) {
+    sessionStorage.setItem('bc_redirect_after_login', window.location.pathname);
+    showToast('Sign In Required', 'Please log in to access your dashboard.', 'warning');
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 400);
+    return false;
+  }
+
+  if (allowedRoles && allowedRoles.length > 0) {
+    const role = user.role || 'USER';
+    const isAllowed = allowedRoles.includes(role) || (role === 'ADMIN' && allowedRoles.includes('ROLE_ADMIN'));
+    if (!isAllowed) {
+      showToast('Access Denied', 'You do not have permission to view this section.', 'error');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 500);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Redirect already logged-in users away from Login / Register
+ */
+function redirectIfAuthenticated() {
+  if (!window.bcApi) return;
+  const user = window.bcApi.getCurrentUser();
+  if (user) {
+    const isAdmin = user.role === 'ADMIN' || user.role === 'ROLE_ADMIN';
+    window.location.href = isAdmin ? 'admin-dashboard.html' : 'donor-dashboard.html';
+  }
+}
+
+/**
  * Toast Notifications
  */
 function showToast(title, message, type = 'info') {
@@ -169,7 +211,7 @@ async function handleNavbarLogout() {
     showToast('Signed Out', 'You have been successfully logged out.', 'info');
     setTimeout(() => {
       window.location.href = 'index.html';
-    }, 600);
+    }, 400);
   } catch (err) {
     showToast('Signed Out', 'Session cleared.', 'info');
     window.location.href = 'index.html';
@@ -190,7 +232,7 @@ function initMobileNav() {
 }
 
 /**
- * Backend Connectivity Monitor (Strictly Restricted to Authorized Admin Dashboard)
+ * Backend Connectivity Monitor
  */
 async function initBackendHealthCheck() {
   const pill = document.getElementById('backend-status-indicator');
@@ -227,7 +269,6 @@ function showBackendHelpModal(isOnline, healthData = null) {
   }
 
   const apiUrl = window.bcApi.baseUrl;
-  const isLocal = apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
 
   modal.innerHTML = `
     <div class="modal-dialog">
@@ -269,6 +310,4 @@ ${apiUrl}</pre>
 document.addEventListener('DOMContentLoaded', () => {
   updateNavbar();
   initMobileNav();
-  // Note: Backend health monitor is strictly initialized inside the Admin Dashboard only.
-});
 });
