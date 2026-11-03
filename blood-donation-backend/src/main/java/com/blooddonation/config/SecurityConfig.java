@@ -109,12 +109,14 @@ public class SecurityConfig {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName(null);
 
-        CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        csrfTokenRepository.setCookieCustomizer(customizer -> customizer
+        CookieCsrfTokenRepository cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        cookieCsrfTokenRepository.setCookieCustomizer(customizer -> customizer
             .sameSite(cookieSameSite)
             .secure(cookieSecure)
             .path("/")
         );
+
+        HybridCsrfTokenRepository csrfTokenRepository = new HybridCsrfTokenRepository(cookieCsrfTokenRepository);
 
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
